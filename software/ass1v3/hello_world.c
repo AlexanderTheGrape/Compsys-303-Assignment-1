@@ -4,6 +4,7 @@
 #include <alt_types.h>
 #include <system.h>
 #include "sys/alt_irq.h"
+#include <string.h>
 
 // ------------- Variables ----------------------------
 int mode = 1;
@@ -43,6 +44,7 @@ unsigned int switchValue = 0;
 char currentChar;
 char charArray[4];
 char charSegment[4];
+void * switchContext = (void*) &switchValue;
 
 // ------------- Main Code ----------------------------
 
@@ -98,6 +100,19 @@ void init_buttons_pio(){
 	alt_irq_register(KEYS_IRQ, buttonContext, NSEW_ped_isr);
 }
 
+void init_switches_pio(){
+	unsigned int uiButton = 0;
+
+	// clears the edge capture register
+	IOWR_ALTERA_AVALON_PIO_EDGE_CAP(SWITCHES_BASE, 0);
+
+	// enable interrupts for all switches
+	IOWR_ALTERA_AVALON_PIO_IRQ_MASK(SWITCHES_BASE, 0xF);
+
+	// start the switch isr
+	alt_irq_register(SWITCHES_IRQ, buttonContext, NSEW_ped_isr);
+}
+
 void simple_tlc(){
 		//Initial state RR, previous state RY
 
@@ -106,17 +121,21 @@ void simple_tlc(){
 		if ((currentState == RR) && (prevState == RY))
 		{
 			if (msCount >= t1) { // Transition to next state
-				if (switchValue == 1){
+				//printf ("%d", switchValue);
+				//if (switchValue == 1){
 					FILE* fp;
-					fp = fopen("/dev/uart1", "r+"); //Open file for reading and writing
-					if(fp)
+
+					fp = fopen(UART_NAME, "r+"); //Open file for reading and writing
+					if(fp != NULL)
 					{
 						// check if all characters are received, in particular, the "[end line]"
 						unsigned int i = 0;
 						unsigned int t = 0;
 						currentChar = 0;
+
+						currentChar = fgetc(fp);
 						while(currentChar != 'n'){
-							currentChar = fgetc(fp);
+							printf("%c", currentChar);
 
 							if (currentChar != ','){
 								charArray[i] = currentChar;
@@ -132,13 +151,14 @@ void simple_tlc(){
 							}
 
 							i = i + 1;
+							currentChar = fgetc(fp);
 						}
-					}
-				}
 
 
 
-					//---------------------------UART---------------------------------
+
+
+						//---------------------------UART---------------------------------
 
 						FILE* fp;
 
@@ -152,36 +172,38 @@ void simple_tlc(){
 								{
 									fwrite (msg,strlen(msg),1,fp);
 								}
-							}*/
-						}
-					//------------------------UART END---------------------------------
-
-					// Set a null
-					if (i < 4) {
-						charArray[i] = 0;
-					}
-					// but if we have a 4 digit number, then the 5th character is going to be set to null
-					new_times[t] = atoi(charArray);
-
-					if (t == 5){
-						// Assign the new times
-						for (unsigned int j=0; j < 6; j++){
-							if (j == 0) {
-								t1 = new_times[j];
-							} else if (j == 1){
-								t2 = new_times[j];
-							} else if (j == 2){
-								t3 = new_times[j];
-							} else if (j == 3){
-								t4 = new_times[j];
-							} else if (j == 4){
-								t5 = new_times[j];
-							} else {
-								t6 = new_times[j];
 							}
+*/						}
+						//------------------------UART END---------------------------------
+
+						// Set a null
+						if (i < 4) {
+							charArray[i] = 0;
+						}
+						// but if we have a 4 digit number, then the 5th character is going to be set to null
+						new_times[t] = atoi(charArray);
+
+						if (t == 5){
+							// Assign the new times
+							for (unsigned int j=0; j < 6; j++){
+								if (j == 0) {
+									t1 = new_times[j];
+								} else if (j == 1){
+									t2 = new_times[j];
+								} else if (j == 2){
+									t3 = new_times[j];
+								} else if (j == 3){
+									t4 = new_times[j];
+								} else if (j == 4){
+									t5 = new_times[j];
+								} else {
+									t6 = new_times[j];
+								}
+							}
+							printf("\r\n t1: %d \r\n t2: %d \r\n t3: %d \r\n t4: %d \r\n t5: %d \r\n t6: %d ", t1, t2, t3, t4, t5, t6);
 						}
 					}
-				}
+				//}
 				if (pedNS_pressed == 1){
 					currentState = GRped;
 					prevState = RR;
@@ -259,29 +281,34 @@ int main()
 
 	// Set the mode
 	//lcd_set_mode(1);
-	lcd_set_mode(2);
+//	lcd_set_mode(2);
+	lcd_set_mode(3);
 
 
 
-	//char* msg = "Detected the character 't'.\n";
-	FILE* fp;
-	//char prompt = 0;
-
-	fp = fopen("/dev/uart1", "r+"); //Open file for reading and writing
-	if(fp)
-	{
-		/*while (prompt != 'v')
-		{
-			prompt = getc(fp); //Get a character from the UART
-			if (prompt == 't')
-			{
-				fwrite (msg,strlen(msg),1,fp);
-			}
-		}*/
-	}
+//	char* msg = "Detected the character 't'.\r\n";
+//	FILE* fp;
+//	char prompt;
+//
+//	fp = fopen(UART_NAME, "r+"); //Open file for reading and writing
+//	//usleep(200000);
+//	if(fp != NULL)
+//	{
+//		while (prompt != 'v')
+//		{
+//			prompt = getc(fp); //Get a character from the UART
+//			if (prompt == 't')
+//			{
+//				fwrite (msg,strlen(msg),1,fp);
+//				//printf ("hello"); // use %s when printing
+//			}
+//		}
+//	}
 
 	while(1){
 		simple_tlc();
+//		prompt = fgetc(fp);
+//		printf ("%c", prompt);
 	}
 	return 0;
 }
