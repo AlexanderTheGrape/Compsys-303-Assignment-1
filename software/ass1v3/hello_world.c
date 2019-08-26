@@ -21,6 +21,7 @@ int prevState = RY;
 
 alt_alarm timer;
 int msCount = 0;
+int one_ms_count = 0;
 
 FILE *lcd;
 
@@ -40,10 +41,26 @@ unsigned int t6=	   2000;
 
 unsigned int new_times[6];
 
-unsigned int switchValue = 0;
+unsigned int switches;
+unsigned int switch0; // mode 1
+unsigned int switch1; // mode 2
+unsigned int switch2; // mode 3
+unsigned int switch3; // mode 4
+
+unsigned int mode1 = 0;
+unsigned int mode2 = 0;
+unsigned int mode3 = 0;
+unsigned int mode4 = 0;
+
+unsigned int car_in = 0;
+unsigned int car_time = 0;
+unsigned int take_photo = 0;
+unsigned int camera_activated = 0;
+
+unsigned int switchValue = 0; //switch 17 used for mode 3
 char currentChar;
 char charArray[4];
-char charSegment[4];
+//char charSegment[4];
 void * switchContext = (void*) &switchValue;
 
 // ------------- Main Code ----------------------------
@@ -51,6 +68,15 @@ void * switchContext = (void*) &switchValue;
 
 
 //alt_irq_register irqReg;
+
+alt_u32 camera_timer_isr(void* context)
+{
+	int *timeCount = (int*) context;
+
+	one_ms_count = msCount + 1;
+
+	return 1;
+}
 
 alt_u32 tlc_timer_isr(void* context)
 {
@@ -63,8 +89,6 @@ alt_u32 tlc_timer_isr(void* context)
 
 void NSEW_ped_isr(void* context)
 {
-	int *timeCount = (int*) context;
-
 	int uiButtonValue = IORD_ALTERA_AVALON_PIO_EDGE_CAP(KEYS_BASE);
 	IOWR_ALTERA_AVALON_PIO_EDGE_CAP(KEYS_BASE, 0);// clear the edge capture register
 
@@ -75,6 +99,79 @@ void NSEW_ped_isr(void* context)
 			pedNS_pressed = 1;
 	} else if (maskedButton1 > 0){
 			pedEW_pressed = 1;
+	}
+}
+void handle_vehicle_button(void* context)
+{
+	int uiButtonValue = IORD_ALTERA_AVALON_PIO_EDGE_CAP(KEYS_BASE);
+	IOWR_ALTERA_AVALON_PIO_EDGE_CAP(KEYS_BASE, 0);// clear the edge capture register
+
+	int maskedButton2 = uiButtonValue & (1 << 2);
+	if (maskedButton2 > 0){
+		if (car_in == 1){ // A car is leaving
+			car_in = 0;
+			car_time = one_ms_count;
+		} else if (car_in == 0){ // A car is arriving
+		// Check if it is a red light
+			if (currentState == RR){
+				// Gotcha!
+				take_photo = 1;
+				car_in = 1;
+				car_time = 0;
+				one_ms_count = 0;
+			} // Check if it is a yellow light
+			else if (currentState == RY || currentState == YR){
+				print("Camera activated");
+				camera_activated = 1;
+				car_in = 1;
+				car_time = 0;
+				one_ms_count = 0;
+			} else {
+				// Don't bother with a green light
+				// Assume a green light car will always exit on time
+				// as we are not required to track these cars in the
+				// brief
+				car_in = 1;
+				car_time = 0;
+				one_ms_count = 0;
+			}
+		}
+	}
+}
+
+void camera_tlc(){
+	if (mode4 == 1){
+		// Process car time
+		// Check if the car time has exceeded 2000ms
+		if (car_time >= 2000 && camera_activated == 1){
+			take_photo = 1;
+		}
+
+		if (take_photo == 1){
+			print("Snapshot taken");
+		} else if (car_time < 2000){
+			print("Vehicle left");
+		}
+	}
+}
+
+void print(char msg[]){
+	if (mode4 == 1){
+		FILE* fp;
+
+		fp = fopen(UART_NAME, "r+"); //Open file for reading and writing
+		if(fp != NULL && mode4 == 1)
+		{
+			fwrite(msg, strlen(msg), 1, fp);
+		}
+	}
+}
+
+void red_light_camera(){
+	if (mode4 == 1){
+		if (car_in == 1){
+			take_photo = 1;
+		}
 	}
 }
 
@@ -101,7 +198,7 @@ void init_buttons_pio(){
 }
 
 void init_switches_pio(){
-	unsigned int uiButton = 0;
+	switches = IORD_ALTERA_AVALON_PIO_DATA(SWITCHES_BASE);
 
 	// clears the edge capture register
 	IOWR_ALTERA_AVALON_PIO_EDGE_CAP(SWITCHES_BASE, 0);
@@ -113,6 +210,113 @@ void init_switches_pio(){
 	alt_irq_register(SWITCHES_IRQ, buttonContext, NSEW_ped_isr);
 }
 
+void switch_modes(){
+	switches = IORD_ALTERA_AVALON_PIO_DATA(SWITCHES_BASE);
+	switch0 = ((1 << 0)&(switches));
+	switch1 = ((1 << 1)&(switches));
+	switch2 = ((1 << 2)&(switches));
+	switch3 = ((1 << 3)&(switches));
+
+	if(switch0 > 0 && mode1 != 1){
+		lcd_set_mode(1);
+		mode1 = 1;
+		mode2 = 0;
+		mode3 = 0;
+		mode4 = 0;
+	} else if (switch1 > 0 && mode2 != 1){
+		lcd_set_mode(2);
+		mode1 = 0;
+		mode2 = 1;
+		mode3 = 0;
+		mode4 = 0;
+	} else if (switch2 > 0 && mode3 != 1){
+		lcd_set_mode(3);
+		mode1 = 0;
+		mode2 = 0;
+		mode3 = 1;
+		mode4 = 0;
+	} else if (switch3 > 0 && mode4 != 1){
+		lcd_set_mode(4);
+		mode1 = 0;
+		mode2 = 0;
+		mode3 = 0;
+		mode4 = 1;
+	} else {
+		if (mode1 != 1 && mode2 != 1 && mode3 != 1 && mode4 != 1){
+			lcd_set_mode(1);
+			mode1 = 1;
+			mode2 = 0;
+			mode3 = 0;
+			mode4 = 0;
+		}
+	}
+}
+
+void mode3_UART(){
+	if (mode3 == 1){
+		switchValue = ((1 << 17) & (switches));
+		printf ("switch is: %d", switchValue);
+		if (switchValue > 0){
+			FILE* fp;
+
+			fp = fopen(UART_NAME, "r+"); //Open file for reading and writing
+			if(fp != NULL)
+			{
+				// check if all characters are received, in particular, the "[end line]"
+				int i = 0;
+				unsigned int t = 0;
+				currentChar = 0;
+
+				currentChar = fgetc(fp);
+				while(currentChar != 'n'){
+					printf("%c", currentChar);
+
+					if (currentChar != ','){
+						charArray[i] = currentChar;
+					} else {
+						// Set a null
+						if (i < 4) {
+							charArray[i] = 0;
+						}
+						// but if we have a 4 digit number, then the 5th character is going to be set to null
+						new_times[t] = atoi(charArray);
+						t = t + 1;
+						i = -1;
+					}
+					i = i + 1;
+					currentChar = fgetc(fp);
+				}
+				// Set a null
+				if (i < 4) {
+					charArray[i] = 0;
+				}
+				// but if we have a 4 digit number, then the 5th character is going to be set to null
+				new_times[t] = atoi(charArray);
+
+				if (t == 5){
+					// Assign the new times
+					for (unsigned int j=0; j < 6; j++){
+						if (j == 0) {
+							t1 = new_times[j];
+						} else if (j == 1){
+							t2 = new_times[j];
+						} else if (j == 2){
+							t3 = new_times[j];
+						} else if (j == 3){
+							t4 = new_times[j];
+						} else if (j == 4){
+							t5 = new_times[j];
+						} else {
+							t6 = new_times[j];
+						}
+					}
+					printf("\r\n t1: %d \r\n t2: %d \r\n t3: %d \r\n t4: %d \r\n t5: %d \r\n t6: %d ", t1, t2, t3, t4, t5, t6);
+				}
+			}
+		}
+	}
+}
+
 void simple_tlc(){
 		//Initial state RR, previous state RY
 
@@ -121,90 +325,8 @@ void simple_tlc(){
 		if ((currentState == RR) && (prevState == RY))
 		{
 			if (msCount >= t1) { // Transition to next state
-				//printf ("%d", switchValue);
-				//if (switchValue == 1){
-					FILE* fp;
-
-					fp = fopen(UART_NAME, "r+"); //Open file for reading and writing
-					if(fp != NULL)
-					{
-						// check if all characters are received, in particular, the "[end line]"
-						unsigned int i = 0;
-						unsigned int t = 0;
-						currentChar = 0;
-
-						currentChar = fgetc(fp);
-						while(currentChar != 'n'){
-							printf("%c", currentChar);
-
-							if (currentChar != ','){
-								charArray[i] = currentChar;
-							} else {
-								// Set a null
-								if (i < 4) {
-									charArray[i] = 0;
-								}
-								// but if we have a 4 digit number, then the 5th character is going to be set to null
-								new_times[t] = atoi(charArray);
-								t = t + 1;
-								i = 0;
-							}
-
-							i = i + 1;
-							currentChar = fgetc(fp);
-						}
-
-
-
-
-
-						//---------------------------UART---------------------------------
-
-						FILE* fp;
-
-						fp = fopen("/dev/uart1", "r+"); //Open file for reading and writing
-						if(fp)
-						{
-							/*while (prompt != 'v')
-							{
-								prompt = getc(fp); //Get a character from the UART
-								if (prompt == 't')
-								{
-									fwrite (msg,strlen(msg),1,fp);
-								}
-							}
-*/						}
-						//------------------------UART END---------------------------------
-
-						// Set a null
-						if (i < 4) {
-							charArray[i] = 0;
-						}
-						// but if we have a 4 digit number, then the 5th character is going to be set to null
-						new_times[t] = atoi(charArray);
-
-						if (t == 5){
-							// Assign the new times
-							for (unsigned int j=0; j < 6; j++){
-								if (j == 0) {
-									t1 = new_times[j];
-								} else if (j == 1){
-									t2 = new_times[j];
-								} else if (j == 2){
-									t3 = new_times[j];
-								} else if (j == 3){
-									t4 = new_times[j];
-								} else if (j == 4){
-									t5 = new_times[j];
-								} else {
-									t6 = new_times[j];
-								}
-							}
-							printf("\r\n t1: %d \r\n t2: %d \r\n t3: %d \r\n t4: %d \r\n t5: %d \r\n t6: %d ", t1, t2, t3, t4, t5, t6);
-						}
-					}
-				//}
-				if (pedNS_pressed == 1){
+				mode3_UART();
+				if (pedNS_pressed == 1 && (mode2 == 1)){
 					currentState = GRped;
 					prevState = RR;
 					msCount = 0;
@@ -225,6 +347,7 @@ void simple_tlc(){
 		} else if (currentState == YR)
 		{
 			if (msCount >= t3){
+				red_light_camera();
 				currentState = RR;
 				prevState = YR;
 				msCount = 0;
@@ -232,7 +355,8 @@ void simple_tlc(){
 		} else if (currentState == RR && prevState == YR)
 		{
 			if (msCount >= t4){
-				if (pedEW_pressed == 1){
+				mode3_UART();
+				if (pedEW_pressed == 1 && (mode2 == 1)){
 					currentState = RGped;
 					prevState = RR;
 					msCount = 0;
@@ -253,6 +377,7 @@ void simple_tlc(){
 		} else if (currentState == RY)
 		{
 			if (msCount >= t6){
+				red_light_camera();
 				currentState = RR;
 				prevState = RY;
 				msCount = 0;
@@ -276,13 +401,16 @@ int main()
 	// Start the timer interrupt to start counting to 0.5s
 	alt_alarm_start(&timer, 500, tlc_timer_isr, NULL);
 
+	// Start the timer interrupt to start counting to 0.5s
+	alt_alarm_start(&timer, 1,  camera_timer_isr, NULL);
+
 	// Set up the button
 	init_buttons_pio();
 
-	// Set the mode
-	//lcd_set_mode(1);
-//	lcd_set_mode(2);
-	lcd_set_mode(3);
+
+//	//lcd_set_mode(1);
+////	lcd_set_mode(2);
+lcd_set_mode(3);
 
 
 
@@ -306,9 +434,13 @@ int main()
 //	}
 
 	while(1){
+		// Set the mode
+		printf("got to 1");
+		switch_modes();
+		printf("got to 2");
 		simple_tlc();
-//		prompt = fgetc(fp);
-//		printf ("%c", prompt);
+		printf("got to 3");
+		camera_tlc();
 	}
 	return 0;
 }
