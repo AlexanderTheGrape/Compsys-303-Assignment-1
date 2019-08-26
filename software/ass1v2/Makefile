@@ -146,16 +146,13 @@ C_SRCS :=
 CXX_SRCS :=
 ASM_SRCS :=
 
-SDIR_C_SRCS :=
-SDIR_CXX_SRCS :=
-SDIR_ASM_SRCS :=
 
 # Path to root of object file tree.
 OBJ_ROOT_DIR := obj
 
 # Options to control objdump.
 CREATE_OBJDUMP := 1
-OBJDUMP_INCLUDE_SOURCE := 0
+OBJDUMP_INCLUDE_SOURCE := 1
 OBJDUMP_FULL_CONTENTS := 0
 
 # Options to enable/disable optional files.
@@ -191,7 +188,6 @@ APP_LIBRARY_NAMES :=
 BUILD_PRE_PROCESS :=
 BUILD_POST_PROCESS :=
 
-OBJDUMP_INCLUDE_SOURCE := 1
 QUARTUS_PROJECT_DIR := ../../
 
 

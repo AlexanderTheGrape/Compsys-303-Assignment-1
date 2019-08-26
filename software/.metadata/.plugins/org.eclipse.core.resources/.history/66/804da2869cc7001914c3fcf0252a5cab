@@ -132,9 +132,7 @@ void simple_tlc(){
 							}
 
 							i = i + 1;
-						}
 					}
-				}
 
 
 

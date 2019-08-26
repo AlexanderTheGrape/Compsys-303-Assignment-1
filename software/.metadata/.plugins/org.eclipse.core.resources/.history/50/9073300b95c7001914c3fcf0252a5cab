@@ -107,54 +107,28 @@ void simple_tlc(){
 		{
 			if (msCount >= t1) { // Transition to next state
 				if (switchValue == 1){
-					FILE* fp;
-					fp = fopen("/dev/uart1", "r+"); //Open file for reading and writing
-					if(fp)
-					{
-						// check if all characters are received, in particular, the "[end line]"
-						unsigned int i = 0;
-						unsigned int t = 0;
-						currentChar = 0;
-						while(currentChar != 'n'){
-							currentChar = fgetc(fp);
+					// check if all characters are received, in particular, the "[end line]"
+					unsigned int i = 0;
+					unsigned int t = 0;
+					currentChar = 0;
+					while(currentChar != 'n'){
+						currentChar = fgetc(FILE *stream - placeholder);
 
-							if (currentChar != ','){
-								charArray[i] = currentChar;
-							} else {
-								// Set a null
-								if (i < 4) {
-									charArray[i] = 0;
-								}
-								// but if we have a 4 digit number, then the 5th character is going to be set to null
-								new_times[t] = atoi(charArray);
-								t = t + 1;
-								i = 0;
+						if (currentChar != ','){
+							charArray[i] = currentChar;
+						} else {
+							// Set a null
+							if (i < 4) {
+								charArray[i] = 0;
 							}
-
-							i = i + 1;
+							// but if we have a 4 digit number, then the 5th character is going to be set to null
+							new_times[t] = atoi(charArray);
+							t = t + 1;
+							i = 0;
 						}
+
+						i = i + 1;
 					}
-				}
-
-
-
-					//---------------------------UART---------------------------------
-
-						FILE* fp;
-
-						fp = fopen("/dev/uart1", "r+"); //Open file for reading and writing
-						if(fp)
-						{
-							/*while (prompt != 'v')
-							{
-								prompt = getc(fp); //Get a character from the UART
-								if (prompt == 't')
-								{
-									fwrite (msg,strlen(msg),1,fp);
-								}
-							}*/
-						}
-					//------------------------UART END---------------------------------
 
 					// Set a null
 					if (i < 4) {
@@ -260,25 +234,6 @@ int main()
 	// Set the mode
 	//lcd_set_mode(1);
 	lcd_set_mode(2);
-
-
-
-	//char* msg = "Detected the character 't'.\n";
-	FILE* fp;
-	//char prompt = 0;
-
-	fp = fopen("/dev/uart1", "r+"); //Open file for reading and writing
-	if(fp)
-	{
-		/*while (prompt != 'v')
-		{
-			prompt = getc(fp); //Get a character from the UART
-			if (prompt == 't')
-			{
-				fwrite (msg,strlen(msg),1,fp);
-			}
-		}*/
-	}
 
 	while(1){
 		simple_tlc();

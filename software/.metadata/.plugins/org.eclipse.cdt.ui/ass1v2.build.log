@@ -1,4 +1,4 @@
-19:36:16 **** Incremental Build of configuration Nios II for project ass1v2 ****
+12:07:07 **** Incremental Build of configuration Nios II for project ass1v2 ****
 make all 
 Info: Building ../ass1v2_bsp/
 C:/intelFPGA/16.1/nios2eds/bin/gnu/H-x86_64-mingw32/bin/make --no-print-directory -C ../ass1v2_bsp/
@@ -10,5 +10,5 @@ D:\CS303-Assignment1\CS303-Assignment1\software\ass1v2_bsp/HAL/src/alt_main.c:15
 collect2.exe: error: ld returned 1 exit status
 make: *** [ass1v2.elf] Error 1
 
-19:36:17 Build Finished (took 889ms)
+12:07:09 Build Finished (took 1s.798ms)
 

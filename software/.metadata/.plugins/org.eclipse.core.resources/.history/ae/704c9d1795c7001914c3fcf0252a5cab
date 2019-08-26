@@ -107,54 +107,28 @@ void simple_tlc(){
 		{
 			if (msCount >= t1) { // Transition to next state
 				if (switchValue == 1){
-					FILE* fp;
-					fp = fopen("/dev/uart1", "r+"); //Open file for reading and writing
-					if(fp)
-					{
-						// check if all characters are received, in particular, the "[end line]"
-						unsigned int i = 0;
-						unsigned int t = 0;
-						currentChar = 0;
-						while(currentChar != 'n'){
-							currentChar = fgetc(fp);
+					// check if all characters are received, in particular, the "[end line]"
+					unsigned int i = 0;
+					unsigned int t = 0;
+					currentChar = 0;
+					while(currentChar != 'n'){
+						currentChar = fgetc(FILE *stream - placeholder);
 
-							if (currentChar != ','){
-								charArray[i] = currentChar;
-							} else {
-								// Set a null
-								if (i < 4) {
-									charArray[i] = 0;
-								}
-								// but if we have a 4 digit number, then the 5th character is going to be set to null
-								new_times[t] = atoi(charArray);
-								t = t + 1;
-								i = 0;
+						if (currentChar != ','){
+							charArray[i] = currentChar;
+						} else {
+							// Set a null
+							if (i < 4) {
+								charArray[i] = 0;
 							}
-
-							i = i + 1;
+							// but if we have a 4 digit number, then the 5th character is going to be set to null
+							new_times[t] = atoi(charArray);
+							t = t + 1;
+							i = 0;
 						}
+
+						i = i + 1;
 					}
-				}
-
-
-
-					//---------------------------UART---------------------------------
-
-						FILE* fp;
-
-						fp = fopen("/dev/uart1", "r+"); //Open file for reading and writing
-						if(fp)
-						{
-							/*while (prompt != 'v')
-							{
-								prompt = getc(fp); //Get a character from the UART
-								if (prompt == 't')
-								{
-									fwrite (msg,strlen(msg),1,fp);
-								}
-							}*/
-						}
-					//------------------------UART END---------------------------------
 
 					// Set a null
 					if (i < 4) {
@@ -243,6 +217,87 @@ void simple_tlc(){
 
 		IOWR_ALTERA_AVALON_PIO_DATA(LED_GREEN_BASE, LEDbits);
 }
+//==================================== 303 LAB 4 CODE ==================================================================
+void usbPutString(char *s)
+{
+// !! Assumes that *s is a string with allocated space >=64 chars
+//  Since USB implementation retricts data packets to 64 chars, this function truncates the
+//  length to 62 char (63rd char is a '!')
+
+    while (USBUART_CDCIsReady() == 0);
+    s[63]='\0';
+    s[62]='!';
+    USBUART_PutData((uint8*)s,strlen(s));
+}
+//* ========================================
+void usbPutChar(char c)
+{
+    while (USBUART_CDCIsReady() == 0);
+    USBUART_PutChar(c);
+}
+//* ========================================
+void handle_rx_binary()
+{
+
+}
+//* ========================================
+void handle_rx_ascii()
+{
+
+}
+
+//* ========================================
+void handle_usb()
+{
+
+    // handles input at terminal, echos it back to the terminal
+    // turn echo OFF, key emulation: only CR
+    // entered string is made available in 'line' and 'flag_KB_string' is set
+
+    static uint8 usbStarted = FALSE;
+    static uint16 usbBufCount = 0;
+    uint8 c;
+
+
+    if (!usbStarted)
+    {
+        if (USBUART_GetConfiguration())
+        {
+            USBUART_CDC_Init();
+            usbStarted = TRUE;
+        }
+    }
+    else
+    {
+        if (USBUART_DataIsReady() != 0)
+        {
+            c = USBUART_GetChar();
+            if ((c == 13) || (c == 10))
+            {
+                entry[usbBufCount]= '\0';
+                strcpy(line,entry);
+                usbBufCount = 0;
+                flag_KB_string = 1;
+            }
+            else
+            {
+                if (((c == CHAR_BACKSP) || (c == CHAR_DEL) ) && (usbBufCount > 0) )
+                    usbBufCount--;
+                else
+                {
+                    if (usbBufCount > (BUF_SIZE-1) )
+                    {
+                       USBUART_PutChar('!');
+                    }
+                    else
+                        entry[usbBufCount++] = c;
+                }
+            }
+        }
+    }
+}
+/* [] END OF FILE */
+
 
 
 
@@ -260,25 +315,6 @@ int main()
 	// Set the mode
 	//lcd_set_mode(1);
 	lcd_set_mode(2);
-
-
-
-	//char* msg = "Detected the character 't'.\n";
-	FILE* fp;
-	//char prompt = 0;
-
-	fp = fopen("/dev/uart1", "r+"); //Open file for reading and writing
-	if(fp)
-	{
-		/*while (prompt != 'v')
-		{
-			prompt = getc(fp); //Get a character from the UART
-			if (prompt == 't')
-			{
-				fwrite (msg,strlen(msg),1,fp);
-			}
-		}*/
-	}
 
 	while(1){
 		simple_tlc();

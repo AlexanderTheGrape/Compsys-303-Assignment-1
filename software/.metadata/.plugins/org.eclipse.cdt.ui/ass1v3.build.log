@@ -1,33 +1,21 @@
-19:36:18 **** Incremental Build of configuration Nios II for project ass1v3 ****
+12:07:10 **** Incremental Build of configuration Nios II for project ass1v3 ****
 make all 
 Info: Building ../ass1v3_bsp/
 C:/intelFPGA/16.1/nios2eds/bin/gnu/H-x86_64-mingw32/bin/make --no-print-directory -C ../ass1v3_bsp/
-[BSP build complete]
-Info: Compiling hello_world.c to obj/default/hello_world.o
-nios2-elf-gcc -xc -MP -MMD -c -I../ass1v3_bsp//HAL/inc -I../ass1v3_bsp/ -I../ass1v3_bsp//drivers/inc  -pipe -D__hal__ -DALT_NO_INSTRUCTION_EMULATION -DALT_SINGLE_THREADED    -O0 -g -Wall   -mno-hw-div -mhw-mul -mno-hw-mulx -mgpopt=global  -o obj/default/hello_world.o hello_world.c
-hello_world.c: In function 'tlc_timer_isr':
-hello_world.c:55:7: warning: unused variable 'timeCount' [-Wunused-variable]
-  int *timeCount = (int*) context;
-       ^
-hello_world.c: In function 'NSEW_ped_isr':
-hello_world.c:64:7: warning: unused variable 'timeCount' [-Wunused-variable]
-  int *timeCount = (int*) context;
-       ^
-hello_world.c: In function 'init_buttons_pio':
-hello_world.c:98:2: warning: implicit declaration of function 'alt_irq_register' [-Wimplicit-function-declaration]
-  alt_irq_register(KEYS_IRQ, buttonContext, NSEW_ped_isr);
-  ^
-hello_world.c:89:15: warning: unused variable 'uiButton' [-Wunused-variable]
-  unsigned int uiButton = 0;
-               ^
-hello_world.c: In function 'simple_tlc':
-hello_world.c:115:27: error: expected expression before 'FILE'
-       currentChar = fgetc(FILE *stream - placeholder);
-                           ^
-hello_world.c:125:23: warning: implicit declaration of function 'atoi' [-Wimplicit-function-declaration]
-        new_times[t] = atoi(*charArray);
-                       ^
-make: *** [obj/default/hello_world.o] Error 1
+Makefile not up to date.
+settings.bsp has been modified since the BSP Makefile was generated.
 
-19:36:18 Build Finished (took 843ms)
+Generate the BSP to update the Makefile, and then build again.
+
+To generate from Eclipse:
+ 1. Right-click the BSP project.
+ 2. In the Nios II Menu, click Generate BSP.
+
+To generate from the command line:
+ nios2-bsp-generate-files --settings=<settings file> --bsp-dir=<target bsp files directory>
+
+make[1]: *** [makefile] Error 1
+make: *** [../ass1v3_bsp/-recurs-make-lib] Error 2
+
+12:07:12 Build Finished (took 2s.81ms)
 
