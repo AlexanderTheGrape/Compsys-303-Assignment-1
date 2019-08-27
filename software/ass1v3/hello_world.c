@@ -20,6 +20,7 @@ int currentState = RR;
 int prevState = RY;
 
 alt_alarm timer;
+alt_alarm timer2;
 int msCount = 0;
 int one_ms_count = 0;
 
@@ -52,10 +53,23 @@ unsigned int mode2 = 0;
 unsigned int mode3 = 0;
 unsigned int mode4 = 0;
 
-unsigned int car_in = 0;
-unsigned int car_time = 0;
+unsigned int car_enter = 0;
+unsigned int car_exit = 1;
+unsigned int car_crossed = 0;
+unsigned int car_time_too_long = 0;
+unsigned int camera_active = 0;
 unsigned int take_photo = 0;
-unsigned int camera_activated = 0;
+unsigned int vehicle_exit = 0;
+unsigned int car_time = 0;
+unsigned int printed_active = 0;
+unsigned int printed_photo = 0;
+unsigned int printed_exit = 0;
+unsigned int printed_time = 0;
+
+//unsigned int car_in = 0;
+//unsigned int car_time = 0;
+//unsigned int take_photo = 0;
+//unsigned int camera_activated = 0;
 
 unsigned int switchValue = 0; //switch 17 used for mode 3
 char currentChar;
@@ -69,14 +83,39 @@ void * switchContext = (void*) &switchValue;
 
 //alt_irq_register irqReg;
 
-//alt_u32 camera_timer_isr(void* context)
-//{
-//	int *timeCount = (int*) context;
-//
-//	one_ms_count = msCount + 1;
-//
-//	return 1;
-//}
+
+void print_stuff(char* msg){
+	//char* message = "I am printing!\n";
+	if (mode4 == 1){
+		FILE* fp;
+
+		fp = fopen(UART_NAME, "r+"); //Open file for reading and writing
+		if(fp != NULL && mode4 == 1)
+		{
+			void print_stuff(char* msg){
+				//char* message = "I am printing!\n";
+				FILE* fp;
+
+				fp = fopen(UART_NAME, "r+"); //Open file for reading and writing
+				if(fp != NULL && mode4 == 1)
+				{
+					printf("I should be printinggggg\n");
+					fwrite(msg, strlen(msg), 1, fp);
+				}
+			}fwrite(msg, strlen(msg), 1, fp);
+		}
+		fclose(fp);
+	}
+}
+
+alt_u32 camera_timer_isr(void* context)
+{
+	int *timeCount = (int*) context;
+
+	one_ms_count++;
+
+	return 1;
+}
 
 alt_u32 tlc_timer_isr(void* context)
 {
@@ -84,34 +123,36 @@ alt_u32 tlc_timer_isr(void* context)
 
 	msCount = msCount + 500;
 
+
 	return 500;
 }
 
-void NSEW_ped_isr(void* context)
+void NSEW_ped_isr()
 {
-	int uiButtonValue = IORD_ALTERA_AVALON_PIO_EDGE_CAP(KEYS_BASE);
-	IOWR_ALTERA_AVALON_PIO_EDGE_CAP(KEYS_BASE, 0);// clear the edge capture register
+//	int uiButtonValue = IORD_ALTERA_AVALON_PIO_EDGE_CAP(KEYS_BASE);
+//	IOWR_ALTERA_AVALON_PIO_EDGE_CAP(KEYS_BASE, 0);// clear the edge capture register
 
 	int maskedButton0 = uiButtonValue & (1 << 0);
 	int maskedButton1 = uiButtonValue & (1 << 1);
 
+	printf("got here\n");
+
 	if (maskedButton0 > 0){
+			printf("button0 pushed yo\n");
 			pedNS_pressed = 1;
 	} else if (maskedButton1 > 0){
+		printf("button1 pushed yo\n");
 			pedEW_pressed = 1;
 	}
-}
 
-//void handle_vehicle_button(void* context)
-//{
-//	int uiButtonValue = IORD_ALTERA_AVALON_PIO_EDGE_CAP(KEYS_BASE);
-//	IOWR_ALTERA_AVALON_PIO_EDGE_CAP(KEYS_BASE, 0);// clear the edge capture register
-//
+	// =========================  Merged ISR for car button =============================
+
 //	int maskedButton2 = uiButtonValue & (1 << 2);
 //	if (maskedButton2 > 0){
+//		printf("button2 pushed yo\n");
 //		if (car_in == 1){ // A car is leaving
-//			car_in = 0;
 //			car_time = one_ms_count;
+//			camera_activated = 0;
 //		} else if (car_in == 0){ // A car is arriving
 //		// Check if it is a red light
 //			if (currentState == RR){
@@ -122,7 +163,123 @@ void NSEW_ped_isr(void* context)
 //				one_ms_count = 0;
 //			} // Check if it is a yellow light
 //			else if (currentState == RY || currentState == YR){
-//				print("Camera activated");
+//				print_stuff("Camera activated");
+//				camera_activated = 1;
+//				car_in = 1;
+//				car_time = 0;
+//				one_ms_count = 0;
+//			} else {
+//				// Don't bother with a green light
+//				// Assume a green light car will always exit on time
+//				// as we are not required to track these cars in the
+//				// brief
+//				car_in = 1;
+//				car_time = 0;
+//				one_ms_count = 0;
+//			}
+//		}
+//	}
+}
+//
+
+void vehicle_button_processing()
+{
+	if ((car_exit == 1)&& (car_crossed == 1))
+	{
+		car_time = one_ms_count;
+	}else if (car_enter == 1)
+	{
+		one_ms_count = 0;
+		car_time = 0;
+	}else if((currentState == RR)&&(car_enter == 1))
+	{
+		take_photo = 1;
+	}else if ((currentState == YR)||(currentState == RY))
+	{
+		if(car_enter == 1)
+		{
+			camera_active = 1;
+		} else if ((car_time < 2000)&& (car_crossed == 1))
+		{
+			vehicle_exit = 1;
+		}else if ((car_crossed = 1)&&(car_time > 2000))
+		{
+			car_time_too_long = 1;
+		}
+	}
+
+	if ((camera_active == 1)&&(printed_active == 0))
+	{
+		print_stuff("camera activated");
+		printed_active = 1;
+	} else if (((take_photo == 1)||(car_time_too_long == 1))&&(printed_photo == 0))
+	{
+		print_stuff("snapshot_taken");
+		printed_photo = 1;
+	} else if ((vehicle_exit == 1)&&(printed_exit == 0))
+	{
+		print_stuff("vehicle left");
+		printed_exit = 1;
+	}
+
+	if ((car_crossed == 1)&&(printed_time == 0))
+	{
+		printf("time in intersection: %d", car_time);
+		printed_time = 1;
+	}
+}
+
+
+void handle_vehicle_button()
+{
+	car_enter = car_exit;
+	car_exit = !car_exit;
+
+	if(car_exit == 1)
+	{
+		car_crossed = 1;
+		car_time_too_long = 0;
+		camera_active = 0;
+		take_photo = 0;
+		vehicle_exit = 0;
+		printed_active = 0;
+		printed_photo = 0;
+		printed_exit = 0;
+		printed_time = 0;
+//		car_time = one_ms_count;
+//	}else
+//	{
+//		one_ms_count = 0;
+//		car_time = 0;
+	}
+}
+
+//void handle_vehicle_button()
+//{
+////	int uiButtonValue = IORD_ALTERA_AVALON_PIO_EDGE_CAP(KEYS_BASE);
+////	IOWR_ALTERA_AVALON_PIO_EDGE_CAP(KEYS_BASE, 0);// clear the edge capture register
+//	printf("\nui button value in hvb: = %d", uiButtonValue);
+//	int maskedButton2 = uiButtonValue & (1 << 2);
+//	if (maskedButton2 > 0){
+//		printf("ahaaa");
+//		if (car_in == 1){ // A car is leaving
+//			printf("\n a car is leaving!");
+//			car_time = one_ms_count;
+//			camera_activated = 0;
+//			car_in = 0;
+//		} else if (car_in == 0){ // A car is arriving
+//		// Check if it is a red light
+//			if (currentState == RR){
+//				// Gotcha!
+//				printf("\n Red light! also someone is here");
+//				take_photo = 1;
+//				car_in = 1;
+//				car_time = 0;
+//				one_ms_count = 0;
+//			} // Check if it is a yellow light
+//			else if (currentState == RY || currentState == YR){
+//				printf("\n Yellow light! also someone is here");
+//				print_stuff("Camera activated");
 //				camera_activated = 1;
 //				car_in = 1;
 //				car_time = 0;
@@ -139,7 +296,7 @@ void NSEW_ped_isr(void* context)
 //		}
 //	}
 //}
-//
+////
 //void camera_tlc(){
 //	if (mode4 == 1){
 //		// Process car time
@@ -149,25 +306,16 @@ void NSEW_ped_isr(void* context)
 //		}
 //
 //		if (take_photo == 1){
-//			print("Snapshot taken");
-//		} else if (car_time < 2000){
-//			print("Vehicle left");
-//		}
+//			print_stuff("Snapshot taken\r\n");
+//			//take_photo = 0;
+//		} //else if (car_time < 2000 && car_in == 1){
+//			//print_stuff("Vehicle left\r\n");
+//			//car_in = 0;
+//		//}
 //	}
 //}
-//
-//void print(char msg[]){
-//	if (mode4 == 1){
-//		FILE* fp;
-//
-//		fp = fopen(UART_NAME, "r+"); //Open file for reading and writing
-//		if(fp != NULL && mode4 == 1)
-//		{
-//			fwrite(msg, strlen(msg), 1, fp);
-//		}
-//	}
-//}
-//
+
+
 //void red_light_camera(){
 //	if (mode4 == 1){
 //		if (car_in == 1){
@@ -175,6 +323,25 @@ void NSEW_ped_isr(void* context)
 //		}
 //	}
 //}
+
+void isr_control(void* context){
+	uiButtonValue = IORD_ALTERA_AVALON_PIO_EDGE_CAP(KEYS_BASE);
+	IOWR_ALTERA_AVALON_PIO_EDGE_CAP(KEYS_BASE, 0);// clear the edge capture register
+	int maskedButton0 = uiButtonValue & (1 << 0);
+	int maskedButton1 = uiButtonValue & (1 << 1);
+	int maskedButton2 = uiButtonValue & (1 << 2);
+
+//	printf("button input recieved\n");
+	printf("\nui button value = %d", uiButtonValue);
+
+	if ((maskedButton0 > 0)||(maskedButton1 > 0)){
+		printf("woot\n");
+		NSEW_ped_isr();
+	}else if (maskedButton2 > 0){
+		printf("wootttttttttwoottttttttttttt\n");
+		handle_vehicle_button();
+	}
+}
 
 void lcd_set_mode(int newMode){
 	mode = newMode;
@@ -195,7 +362,7 @@ void init_buttons_pio(){
 	IOWR_ALTERA_AVALON_PIO_IRQ_MASK(KEYS_BASE, 0x7);
 
 	// start the button isr
-	alt_irq_register(KEYS_IRQ, buttonContext, NSEW_ped_isr);
+	alt_irq_register(KEYS_IRQ, buttonContext, isr_control);
 }
 
 void init_switches_pio(){
@@ -208,7 +375,7 @@ void init_switches_pio(){
 	IOWR_ALTERA_AVALON_PIO_IRQ_MASK(SWITCHES_BASE, 0xF);
 
 	// start the switch isr
-	alt_irq_register(SWITCHES_IRQ, buttonContext, NSEW_ped_isr);
+	//alt_irq_register(SWITCHES_IRQ, buttonContext, NSEW_ped_isr);
 }
 
 void switch_modes(){
@@ -348,7 +515,7 @@ void simple_tlc(){
 		} else if (currentState == YR)
 		{
 			if (msCount >= t3){
-				//red_light_camera();
+//				red_light_camera();
 				currentState = RR;
 				prevState = YR;
 				msCount = 0;
@@ -378,7 +545,7 @@ void simple_tlc(){
 		} else if (currentState == RY)
 		{
 			if (msCount >= t6){
-				//red_light_camera();
+//				red_light_camera();
 				currentState = RR;
 				prevState = RY;
 				msCount = 0;
@@ -403,7 +570,7 @@ int main()
 	alt_alarm_start(&timer, 500, tlc_timer_isr, NULL);
 
 	// Start the timer interrupt to start counting to 0.5s
-//	alt_alarm_start(&timer, 1,  camera_timer_isr, NULL);
+	alt_alarm_start(&timer2, 1, camera_timer_isr, NULL);
 
 	// Set up the button
 	init_buttons_pio();
@@ -412,7 +579,19 @@ int main()
 //	//lcd_set_mode(1);
 ////	lcd_set_mode(2);
 //lcd_set_mode(3);
-
+	while(1){
+		// Set the mode
+		//printf("got to 1");
+		switch_modes();
+		//printf("got to 2");
+		simple_tlc();
+		//printf("got to 3");
+//		camera_tlc();
+		vehicle_button_processing();
+		//print_stuff("wot");
+	}
+	return 0;
+}
 
 
 //	char* msg = "Detected the character 't'.\r\n";
@@ -434,17 +613,7 @@ int main()
 //		}
 //	}
 
-	while(1){
-		// Set the mode
-		//printf("got to 1");
-		switch_modes();
-		//printf("got to 2");
-		simple_tlc();
-		//printf("got to 3");
-		//camera_tlc();
-	}
-	return 0;
-}
+
 
 //
 //printf("%d",sizeof(int)); // Show the size of an integer
