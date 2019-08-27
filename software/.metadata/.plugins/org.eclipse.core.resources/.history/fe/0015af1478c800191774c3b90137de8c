@@ -348,7 +348,7 @@ void simple_tlc(){
 		} else if (currentState == YR)
 		{
 			if (msCount >= t3){
-				//red_light_camera();
+				red_light_camera();
 				currentState = RR;
 				prevState = YR;
 				msCount = 0;
@@ -378,7 +378,7 @@ void simple_tlc(){
 		} else if (currentState == RY)
 		{
 			if (msCount >= t6){
-				//red_light_camera();
+				red_light_camera();
 				currentState = RR;
 				prevState = RY;
 				msCount = 0;
@@ -411,7 +411,7 @@ int main()
 
 //	//lcd_set_mode(1);
 ////	lcd_set_mode(2);
-//lcd_set_mode(3);
+lcd_set_mode(3);
 
 
 
@@ -436,12 +436,12 @@ int main()
 
 	while(1){
 		// Set the mode
-		//printf("got to 1");
+		printf("got to 1");
 		switch_modes();
-		//printf("got to 2");
+		printf("got to 2");
 		simple_tlc();
-		//printf("got to 3");
-		//camera_tlc();
+		printf("got to 3");
+		camera_tlc();
 	}
 	return 0;
 }

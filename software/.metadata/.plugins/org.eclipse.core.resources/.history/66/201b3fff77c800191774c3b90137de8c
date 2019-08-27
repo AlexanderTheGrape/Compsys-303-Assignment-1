@@ -69,14 +69,14 @@ void * switchContext = (void*) &switchValue;
 
 //alt_irq_register irqReg;
 
-//alt_u32 camera_timer_isr(void* context)
-//{
-//	int *timeCount = (int*) context;
-//
-//	one_ms_count = msCount + 1;
-//
-//	return 1;
-//}
+alt_u32 camera_timer_isr(void* context)
+{
+	int *timeCount = (int*) context;
+
+	one_ms_count = msCount + 1;
+
+	return 1;
+}
 
 alt_u32 tlc_timer_isr(void* context)
 {
@@ -101,80 +101,79 @@ void NSEW_ped_isr(void* context)
 			pedEW_pressed = 1;
 	}
 }
+void handle_vehicle_button(void* context)
+{
+	int uiButtonValue = IORD_ALTERA_AVALON_PIO_EDGE_CAP(KEYS_BASE);
+	IOWR_ALTERA_AVALON_PIO_EDGE_CAP(KEYS_BASE, 0);// clear the edge capture register
 
-//void handle_vehicle_button(void* context)
-//{
-//	int uiButtonValue = IORD_ALTERA_AVALON_PIO_EDGE_CAP(KEYS_BASE);
-//	IOWR_ALTERA_AVALON_PIO_EDGE_CAP(KEYS_BASE, 0);// clear the edge capture register
-//
-//	int maskedButton2 = uiButtonValue & (1 << 2);
-//	if (maskedButton2 > 0){
-//		if (car_in == 1){ // A car is leaving
-//			car_in = 0;
-//			car_time = one_ms_count;
-//		} else if (car_in == 0){ // A car is arriving
-//		// Check if it is a red light
-//			if (currentState == RR){
-//				// Gotcha!
-//				take_photo = 1;
-//				car_in = 1;
-//				car_time = 0;
-//				one_ms_count = 0;
-//			} // Check if it is a yellow light
-//			else if (currentState == RY || currentState == YR){
-//				print("Camera activated");
-//				camera_activated = 1;
-//				car_in = 1;
-//				car_time = 0;
-//				one_ms_count = 0;
-//			} else {
-//				// Don't bother with a green light
-//				// Assume a green light car will always exit on time
-//				// as we are not required to track these cars in the
-//				// brief
-//				car_in = 1;
-//				car_time = 0;
-//				one_ms_count = 0;
-//			}
-//		}
-//	}
-//}
-//
-//void camera_tlc(){
-//	if (mode4 == 1){
-//		// Process car time
-//		// Check if the car time has exceeded 2000ms
-//		if (car_time >= 2000 && camera_activated == 1){
-//			take_photo = 1;
-//		}
-//
-//		if (take_photo == 1){
-//			print("Snapshot taken");
-//		} else if (car_time < 2000){
-//			print("Vehicle left");
-//		}
-//	}
-//}
-//
-//void print(char msg[]){
-//	if (mode4 == 1){
-//		FILE* fp;
-//
-//		fp = fopen(UART_NAME, "r+"); //Open file for reading and writing
-//		if(fp != NULL && mode4 == 1)
-//		{
-//			fwrite(msg, strlen(msg), 1, fp);
-//		}
-//	}
-//}
-//
-//void red_light_camera(){
-//	if (mode4 == 1){
-//		if (car_in == 1){
-//			take_photo = 1;
-//		}
-//	}
-//}
+	int maskedButton2 = uiButtonValue & (1 << 2);
+	if (maskedButton2 > 0){
+		if (car_in == 1){ // A car is leaving
+			car_in = 0;
+			car_time = one_ms_count;
+		} else if (car_in == 0){ // A car is arriving
+		// Check if it is a red light
+			if (currentState == RR){
+				// Gotcha!
+				take_photo = 1;
+				car_in = 1;
+				car_time = 0;
+				one_ms_count = 0;
+			} // Check if it is a yellow light
+			else if (currentState == RY || currentState == YR){
+				print("Camera activated");
+				camera_activated = 1;
+				car_in = 1;
+				car_time = 0;
+				one_ms_count = 0;
+			} else {
+				// Don't bother with a green light
+				// Assume a green light car will always exit on time
+				// as we are not required to track these cars in the
+				// brief
+				car_in = 1;
+				car_time = 0;
+				one_ms_count = 0;
+			}
+		}
+	}
+}
+
+void camera_tlc(){
+	if (mode4 == 1){
+		// Process car time
+		// Check if the car time has exceeded 2000ms
+		if (car_time >= 2000 && camera_activated == 1){
+			take_photo = 1;
+		}
+
+		if (take_photo == 1){
+			print("Snapshot taken");
+		} else if (car_time < 2000){
+			print("Vehicle left");
+		}
+	}
+}
+
+void print(char msg[]){
+	if (mode4 == 1){
+		FILE* fp;
+
+		fp = fopen(UART_NAME, "r+"); //Open file for reading and writing
+		if(fp != NULL && mode4 == 1)
+		{
+			fwrite(msg, strlen(msg), 1, fp);
+		}
+	}
+}
+
+void red_light_camera(){
+	if (mode4 == 1){
+		if (car_in == 1){
+			take_photo = 1;
+		}
+	}
+}
 
 void lcd_set_mode(int newMode){
 	mode = newMode;
@@ -348,7 +347,7 @@ void simple_tlc(){
 		} else if (currentState == YR)
 		{
 			if (msCount >= t3){
-				//red_light_camera();
+				red_light_camera();
 				currentState = RR;
 				prevState = YR;
 				msCount = 0;
@@ -378,7 +377,7 @@ void simple_tlc(){
 		} else if (currentState == RY)
 		{
 			if (msCount >= t6){
-				//red_light_camera();
+				red_light_camera();
 				currentState = RR;
 				prevState = RY;
 				msCount = 0;
@@ -403,7 +402,7 @@ int main()
 	alt_alarm_start(&timer, 500, tlc_timer_isr, NULL);
 
 	// Start the timer interrupt to start counting to 0.5s
-//	alt_alarm_start(&timer, 1,  camera_timer_isr, NULL);
+	alt_alarm_start(&timer, 1,  camera_timer_isr, NULL);
 
 	// Set up the button
 	init_buttons_pio();
@@ -411,7 +410,7 @@ int main()
 
 //	//lcd_set_mode(1);
 ////	lcd_set_mode(2);
-//lcd_set_mode(3);
+lcd_set_mode(3);
 
 
 
@@ -436,12 +435,12 @@ int main()
 
 	while(1){
 		// Set the mode
-		//printf("got to 1");
+		printf("got to 1");
 		switch_modes();
-		//printf("got to 2");
+		printf("got to 2");
 		simple_tlc();
-		//printf("got to 3");
-		//camera_tlc();
+		printf("got to 3");
+		camera_tlc();
 	}
 	return 0;
 }

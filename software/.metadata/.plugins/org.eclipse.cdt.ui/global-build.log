@@ -4961,3 +4961,235 @@ Info: Building ../ass1v3_bsp/
 C:/intelFPGA/16.1/nios2eds/bin/gnu/H-x86_64-mingw32/bin/make --no-print-directory -C ../ass1v3_bsp/
 [BSP build complete]
 [ass1v3 build complete]
+15:09:09 **** Incremental Build of configuration Nios II for project ass1v2 ****
+make all 
+Info: Building ../ass1v2_bsp/
+C:/intelFPGA/16.1/nios2eds/bin/gnu/H-x86_64-mingw32/bin/make --no-print-directory -C ../ass1v2_bsp/
+[BSP build complete]
+Info: Linking ass1v2.elf
+nios2-elf-g++  -T'../ass1v2_bsp//linker.x' -msys-crt0='../ass1v2_bsp//obj/HAL/src/crt0.o' -msys-lib=hal_bsp -L../ass1v2_bsp/   -Wl,-Map=ass1v2.map   -O0 -g -Wall   -mno-hw-div -mhw-mul -mno-hw-mulx -mgpopt=global  -o ass1v2.elf  -lm -msys-lib=m
+../ass1v2_bsp/\libhal_bsp.a(alt_main.o): In function `alt_main':
+D:\CS303-Assignment1\CS303-Assignment1\software\ass1v2_bsp/HAL/src/alt_main.c:154: undefined reference to `main'
+collect2.exe: error: ld returned 1 exit status
+make: *** [ass1v2.elf] Error 1
+15:09:12 **** Incremental Build of configuration Nios II for project ass1v2_bsp ****
+make all 
+[BSP build complete]
+15:09:13 **** Incremental Build of configuration Nios II for project ass1v3 ****
+make all 
+Info: Building ../ass1v3_bsp/
+C:/intelFPGA/16.1/nios2eds/bin/gnu/H-x86_64-mingw32/bin/make --no-print-directory -C ../ass1v3_bsp/
+[BSP build complete]
+Info: Compiling hello_world.c to obj/default/hello_world.o
+nios2-elf-gcc -xc -MP -MMD -c -I../ass1v3_bsp//HAL/inc -I../ass1v3_bsp/ -I../ass1v3_bsp//drivers/inc  -pipe -D__hal__ -DALT_NO_INSTRUCTION_EMULATION -DALT_SINGLE_THREADED    -O0 -g -Wall   -mno-hw-div -mhw-mul -mno-hw-mulx -mgpopt=global  -o obj/default/hello_world.o hello_world.c
+hello_world.c: In function 'tlc_timer_isr':
+hello_world.c:83:7: warning: unused variable 'timeCount' [-Wunused-variable]
+  int *timeCount = (int*) context;
+       ^
+hello_world.c: In function 'init_buttons_pio':
+hello_world.c:198:2: warning: implicit declaration of function 'alt_irq_register' [-Wimplicit-function-declaration]
+  alt_irq_register(KEYS_IRQ, buttonContext, NSEW_ped_isr);
+  ^
+hello_world.c:189:15: warning: unused variable 'uiButton' [-Wunused-variable]
+  unsigned int uiButton = 0;
+               ^
+hello_world.c: In function 'mode3_UART':
+hello_world.c:283:22: warning: implicit declaration of function 'atoi' [-Wimplicit-function-declaration]
+       new_times[t] = atoi(charArray);
+                      ^
+hello_world.c: In function 'simple_tlc':
+hello_world.c:351:5: warning: implicit declaration of function 'red_light_camera' [-Wimplicit-function-declaration]
+     red_light_camera();
+     ^
+hello_world.c: In function 'main':
+hello_world.c:444:3: warning: implicit declaration of function 'camera_tlc' [-Wimplicit-function-declaration]
+   camera_tlc();
+   ^
+Info: Linking ass1v3.elf
+nios2-elf-g++  -T'../ass1v3_bsp//linker.x' -msys-crt0='../ass1v3_bsp//obj/HAL/src/crt0.o' -msys-lib=hal_bsp -L../ass1v3_bsp/   -Wl,-Map=ass1v3.map   -O0 -g -Wall   -mno-hw-div -mhw-mul -mno-hw-mulx -mgpopt=global  -o ass1v3.elf obj/default/hello_world.o -lm -msys-lib=m
+obj/default/hello_world.o: In function `simple_tlc':
+D:\Compsys-303-Assignment-1\software\ass1v3/hello_world.c:351: undefined reference to `red_light_camera'
+D:\Compsys-303-Assignment-1\software\ass1v3/hello_world.c:381: undefined reference to `red_light_camera'
+obj/default/hello_world.o: In function `main':
+D:\Compsys-303-Assignment-1\software\ass1v3/hello_world.c:444: undefined reference to `camera_tlc'
+collect2.exe: error: ld returned 1 exit status
+make: *** [ass1v3.elf] Error 1
+15:09:16 **** Incremental Build of configuration Nios II for project ass1v3_bsp ****
+make all 
+[BSP build complete]
+15:09:59 **** Incremental Build of configuration Nios II for project ass1v2 ****
+make all 
+Info: Building ../ass1v2_bsp/
+C:/intelFPGA/16.1/nios2eds/bin/gnu/H-x86_64-mingw32/bin/make --no-print-directory -C ../ass1v2_bsp/
+[BSP build complete]
+Info: Linking ass1v2.elf
+nios2-elf-g++  -T'../ass1v2_bsp//linker.x' -msys-crt0='../ass1v2_bsp//obj/HAL/src/crt0.o' -msys-lib=hal_bsp -L../ass1v2_bsp/   -Wl,-Map=ass1v2.map   -O0 -g -Wall   -mno-hw-div -mhw-mul -mno-hw-mulx -mgpopt=global  -o ass1v2.elf  -lm -msys-lib=m
+../ass1v2_bsp/\libhal_bsp.a(alt_main.o): In function `alt_main':
+D:\CS303-Assignment1\CS303-Assignment1\software\ass1v2_bsp/HAL/src/alt_main.c:154: undefined reference to `main'
+collect2.exe: error: ld returned 1 exit status
+make: *** [ass1v2.elf] Error 1
+15:10:00 **** Incremental Build of configuration Nios II for project ass1v2_bsp ****
+make all 
+[BSP build complete]
+15:10:01 **** Incremental Build of configuration Nios II for project ass1v3 ****
+make all 
+Info: Building ../ass1v3_bsp/
+C:/intelFPGA/16.1/nios2eds/bin/gnu/H-x86_64-mingw32/bin/make --no-print-directory -C ../ass1v3_bsp/
+[BSP build complete]
+Info: Compiling hello_world.c to obj/default/hello_world.o
+nios2-elf-gcc -xc -MP -MMD -c -I../ass1v3_bsp//HAL/inc -I../ass1v3_bsp/ -I../ass1v3_bsp//drivers/inc  -pipe -D__hal__ -DALT_NO_INSTRUCTION_EMULATION -DALT_SINGLE_THREADED    -O0 -g -Wall   -mno-hw-div -mhw-mul -mno-hw-mulx -mgpopt=global  -o obj/default/hello_world.o hello_world.c
+hello_world.c: In function 'tlc_timer_isr':
+hello_world.c:83:7: warning: unused variable 'timeCount' [-Wunused-variable]
+  int *timeCount = (int*) context;
+       ^
+hello_world.c: In function 'init_buttons_pio':
+hello_world.c:198:2: warning: implicit declaration of function 'alt_irq_register' [-Wimplicit-function-declaration]
+  alt_irq_register(KEYS_IRQ, buttonContext, NSEW_ped_isr);
+  ^
+hello_world.c:189:15: warning: unused variable 'uiButton' [-Wunused-variable]
+  unsigned int uiButton = 0;
+               ^
+hello_world.c: In function 'mode3_UART':
+hello_world.c:283:22: warning: implicit declaration of function 'atoi' [-Wimplicit-function-declaration]
+       new_times[t] = atoi(charArray);
+                      ^
+Info: Linking ass1v3.elf
+nios2-elf-g++  -T'../ass1v3_bsp//linker.x' -msys-crt0='../ass1v3_bsp//obj/HAL/src/crt0.o' -msys-lib=hal_bsp -L../ass1v3_bsp/   -Wl,-Map=ass1v3.map   -O0 -g -Wall   -mno-hw-div -mhw-mul -mno-hw-mulx -mgpopt=global  -o ass1v3.elf obj/default/hello_world.o -lm -msys-lib=m
+nios2-elf-insert ass1v3.elf --thread_model hal --cpu_name cpu --qsys true --simulation_enabled false --stderr_dev jtag_uart --stdin_dev jtag_uart --stdout_dev jtag_uart --sopc_system_name nios2_system --quartus_project_dir "D:/Compsys-303-Assignment-1" --jdi ../..//output_files/lab1.jdi --sopcinfo D:/Compsys-303-Assignment-1/software/ass1v3_bsp/../../nios2_system.sopcinfo
+Info: (ass1v3.elf) 82 KBytes program size (code + initialized data).
+Info:              8102 KBytes free for stack + heap.
+Info: Creating ass1v3.objdump
+nios2-elf-objdump --disassemble --syms --all-header --source ass1v3.elf >ass1v3.objdump
+[ass1v3 build complete]
+15:10:06 **** Incremental Build of configuration Nios II for project ass1v3_bsp ****
+make all 
+[BSP build complete]
+15:10:26 **** Build of configuration Nios II for project ass1v3 ****
+make all 
+Info: Building ../ass1v3_bsp/
+C:/intelFPGA/16.1/nios2eds/bin/gnu/H-x86_64-mingw32/bin/make --no-print-directory -C ../ass1v3_bsp/
+[BSP build complete]
+[ass1v3 build complete]
+15:10:29 **** Incremental Build of configuration Nios II for project ass1v3 ****
+make all 
+Info: Building ../ass1v3_bsp/
+C:/intelFPGA/16.1/nios2eds/bin/gnu/H-x86_64-mingw32/bin/make --no-print-directory -C ../ass1v3_bsp/
+[BSP build complete]
+[ass1v3 build complete]
+15:12:21 **** Incremental Build of configuration Nios II for project ass1v2 ****
+make all 
+Info: Building ../ass1v2_bsp/
+C:/intelFPGA/16.1/nios2eds/bin/gnu/H-x86_64-mingw32/bin/make --no-print-directory -C ../ass1v2_bsp/
+[BSP build complete]
+Info: Linking ass1v2.elf
+nios2-elf-g++  -T'../ass1v2_bsp//linker.x' -msys-crt0='../ass1v2_bsp//obj/HAL/src/crt0.o' -msys-lib=hal_bsp -L../ass1v2_bsp/   -Wl,-Map=ass1v2.map   -O0 -g -Wall   -mno-hw-div -mhw-mul -mno-hw-mulx -mgpopt=global  -o ass1v2.elf  -lm -msys-lib=m
+../ass1v2_bsp/\libhal_bsp.a(alt_main.o): In function `alt_main':
+D:\CS303-Assignment1\CS303-Assignment1\software\ass1v2_bsp/HAL/src/alt_main.c:154: undefined reference to `main'
+collect2.exe: error: ld returned 1 exit status
+make: *** [ass1v2.elf] Error 1
+15:12:22 **** Incremental Build of configuration Nios II for project ass1v2_bsp ****
+make all 
+[BSP build complete]
+15:12:23 **** Incremental Build of configuration Nios II for project ass1v3 ****
+make all 
+Info: Building ../ass1v3_bsp/
+C:/intelFPGA/16.1/nios2eds/bin/gnu/H-x86_64-mingw32/bin/make --no-print-directory -C ../ass1v3_bsp/
+[BSP build complete]
+Info: Compiling hello_world.c to obj/default/hello_world.o
+nios2-elf-gcc -xc -MP -MMD -c -I../ass1v3_bsp//HAL/inc -I../ass1v3_bsp/ -I../ass1v3_bsp//drivers/inc  -pipe -D__hal__ -DALT_NO_INSTRUCTION_EMULATION -DALT_SINGLE_THREADED    -O0 -g -Wall   -mno-hw-div -mhw-mul -mno-hw-mulx -mgpopt=global  -o obj/default/hello_world.o hello_world.c
+hello_world.c: In function 'tlc_timer_isr':
+hello_world.c:83:7: warning: unused variable 'timeCount' [-Wunused-variable]
+  int *timeCount = (int*) context;
+       ^
+hello_world.c: In function 'init_buttons_pio':
+hello_world.c:198:2: warning: implicit declaration of function 'alt_irq_register' [-Wimplicit-function-declaration]
+  alt_irq_register(KEYS_IRQ, buttonContext, NSEW_ped_isr);
+  ^
+hello_world.c:189:15: warning: unused variable 'uiButton' [-Wunused-variable]
+  unsigned int uiButton = 0;
+               ^
+hello_world.c: In function 'mode3_UART':
+hello_world.c:283:22: warning: implicit declaration of function 'atoi' [-Wimplicit-function-declaration]
+       new_times[t] = atoi(charArray);
+                      ^
+Info: Linking ass1v3.elf
+nios2-elf-g++  -T'../ass1v3_bsp//linker.x' -msys-crt0='../ass1v3_bsp//obj/HAL/src/crt0.o' -msys-lib=hal_bsp -L../ass1v3_bsp/   -Wl,-Map=ass1v3.map   -O0 -g -Wall   -mno-hw-div -mhw-mul -mno-hw-mulx -mgpopt=global  -o ass1v3.elf obj/default/hello_world.o -lm -msys-lib=m
+nios2-elf-insert ass1v3.elf --thread_model hal --cpu_name cpu --qsys true --simulation_enabled false --stderr_dev jtag_uart --stdin_dev jtag_uart --stdout_dev jtag_uart --sopc_system_name nios2_system --quartus_project_dir "D:/Compsys-303-Assignment-1" --jdi ../..//output_files/lab1.jdi --sopcinfo D:/Compsys-303-Assignment-1/software/ass1v3_bsp/../../nios2_system.sopcinfo
+Info: (ass1v3.elf) 82 KBytes program size (code + initialized data).
+Info:              8102 KBytes free for stack + heap.
+Info: Creating ass1v3.objdump
+nios2-elf-objdump --disassemble --syms --all-header --source ass1v3.elf >ass1v3.objdump
+[ass1v3 build complete]
+15:12:27 **** Incremental Build of configuration Nios II for project ass1v3_bsp ****
+make all 
+[BSP build complete]
+15:12:35 **** Incremental Build of configuration Nios II for project ass1v3 ****
+make all 
+Info: Building ../ass1v3_bsp/
+C:/intelFPGA/16.1/nios2eds/bin/gnu/H-x86_64-mingw32/bin/make --no-print-directory -C ../ass1v3_bsp/
+[BSP build complete]
+[ass1v3 build complete]
+15:14:34 **** Build of configuration Nios II for project ass1v2 ****
+make all 
+Info: Building ../ass1v2_bsp/
+C:/intelFPGA/16.1/nios2eds/bin/gnu/H-x86_64-mingw32/bin/make --no-print-directory -C ../ass1v2_bsp/
+[BSP build complete]
+Info: Linking ass1v2.elf
+nios2-elf-g++  -T'../ass1v2_bsp//linker.x' -msys-crt0='../ass1v2_bsp//obj/HAL/src/crt0.o' -msys-lib=hal_bsp -L../ass1v2_bsp/   -Wl,-Map=ass1v2.map   -O0 -g -Wall   -mno-hw-div -mhw-mul -mno-hw-mulx -mgpopt=global  -o ass1v2.elf  -lm -msys-lib=m
+../ass1v2_bsp/\libhal_bsp.a(alt_main.o): In function `alt_main':
+D:\CS303-Assignment1\CS303-Assignment1\software\ass1v2_bsp/HAL/src/alt_main.c:154: undefined reference to `main'
+collect2.exe: error: ld returned 1 exit status
+make: *** [ass1v2.elf] Error 1
+15:14:36 **** Build of configuration Nios II for project ass1v2_bsp ****
+make all 
+[BSP build complete]
+15:14:36 **** Build of configuration Nios II for project ass1v3 ****
+make all 
+Info: Building ../ass1v3_bsp/
+C:/intelFPGA/16.1/nios2eds/bin/gnu/H-x86_64-mingw32/bin/make --no-print-directory -C ../ass1v3_bsp/
+[BSP build complete]
+[ass1v3 build complete]
+15:14:38 **** Build of configuration Nios II for project ass1v3_bsp ****
+make all 
+[BSP build complete]
+15:15:08 **** Incremental Build of configuration Nios II for project ass1v3 ****
+make all 
+Info: Building ../ass1v3_bsp/
+C:/intelFPGA/16.1/nios2eds/bin/gnu/H-x86_64-mingw32/bin/make --no-print-directory -C ../ass1v3_bsp/
+[BSP build complete]
+[ass1v3 build complete]
+15:16:32 **** Incremental Build of configuration Nios II for project ass1v2 ****
+make all 
+Info: Building ../ass1v2_bsp/
+C:/intelFPGA/16.1/nios2eds/bin/gnu/H-x86_64-mingw32/bin/make --no-print-directory -C ../ass1v2_bsp/
+[BSP build complete]
+Info: Linking ass1v2.elf
+nios2-elf-g++  -T'../ass1v2_bsp//linker.x' -msys-crt0='../ass1v2_bsp//obj/HAL/src/crt0.o' -msys-lib=hal_bsp -L../ass1v2_bsp/   -Wl,-Map=ass1v2.map   -O0 -g -Wall   -mno-hw-div -mhw-mul -mno-hw-mulx -mgpopt=global  -o ass1v2.elf  -lm -msys-lib=m
+../ass1v2_bsp/\libhal_bsp.a(alt_main.o): In function `alt_main':
+D:\CS303-Assignment1\CS303-Assignment1\software\ass1v2_bsp/HAL/src/alt_main.c:154: undefined reference to `main'
+collect2.exe: error: ld returned 1 exit status
+make: *** [ass1v2.elf] Error 1
+15:16:33 **** Incremental Build of configuration Nios II for project ass1v2_bsp ****
+make all 
+[BSP build complete]
+15:16:34 **** Incremental Build of configuration Nios II for project ass1v3 ****
+make all 
+Info: Building ../ass1v3_bsp/
+C:/intelFPGA/16.1/nios2eds/bin/gnu/H-x86_64-mingw32/bin/make --no-print-directory -C ../ass1v3_bsp/
+[BSP build complete]
+[ass1v3 build complete]
+15:16:36 **** Incremental Build of configuration Nios II for project ass1v3_bsp ****
+make all 
+[BSP build complete]
+15:16:40 **** Build of configuration Nios II for project ass1v3 ****
+make all 
+Info: Building ../ass1v3_bsp/
+C:/intelFPGA/16.1/nios2eds/bin/gnu/H-x86_64-mingw32/bin/make --no-print-directory -C ../ass1v3_bsp/
+[BSP build complete]
+[ass1v3 build complete]
+15:16:42 **** Incremental Build of configuration Nios II for project ass1v3 ****
+make all 
+Info: Building ../ass1v3_bsp/
+C:/intelFPGA/16.1/nios2eds/bin/gnu/H-x86_64-mingw32/bin/make --no-print-directory -C ../ass1v3_bsp/
+[BSP build complete]
+[ass1v3 build complete]

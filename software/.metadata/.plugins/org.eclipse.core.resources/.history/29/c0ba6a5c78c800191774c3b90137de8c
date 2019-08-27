@@ -436,11 +436,11 @@ int main()
 
 	while(1){
 		// Set the mode
-		//printf("got to 1");
+		printf("got to 1");
 		switch_modes();
-		//printf("got to 2");
+		printf("got to 2");
 		simple_tlc();
-		//printf("got to 3");
+		printf("got to 3");
 		//camera_tlc();
 	}
 	return 0;
