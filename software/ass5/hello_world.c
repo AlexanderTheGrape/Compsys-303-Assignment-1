@@ -207,7 +207,6 @@ void red_light_camera(){
 					printf("\nNew snapshot text in PUTTY\n");
 					snapshot_taken = 1;
 					camera_active = 0;
-					camera_used = 1;
 				}
 
 
@@ -219,6 +218,7 @@ void red_light_camera(){
 
 			} else if ((currentState == RY || currentState == YR) && camera_active == 0){
 				camera_active = 1;
+				camera_used = 1;
 				one_ms_count = 0;
 				print_stuff("\r\nCamera activated");
 				printf("\nNew camera text in PUTTY\n");

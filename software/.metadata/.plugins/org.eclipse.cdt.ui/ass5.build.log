@@ -1,9 +1,9 @@
-12:18:02 **** Incremental Build of configuration Nios II for project ass5 ****
+12:25:25 **** Incremental Build of configuration Nios II for project ass5 ****
 make all 
 Info: Building ../ass5_bsp/
 C:/intelFPGA/16.1/nios2eds/bin/gnu/H-x86_64-mingw32/bin/make --no-print-directory -C ../ass5_bsp/
 [BSP build complete]
 [ass5 build complete]
 
-12:18:03 Build Finished (took 1s.140ms)
+12:25:26 Build Finished (took 1s.150ms)
 

@@ -1386,7 +1386,7 @@ void red_light_camera(){
 			if (camera_active == 1)
   800508:	d0a77417 	ldw	r2,-25136(gp)
   80050c:	10800058 	cmpnei	r2,r2,1
-  800510:	1000111e 	bne	r2,zero,800558 <red_light_camera+0x80>
+  800510:	10000f1e 	bne	r2,zero,800550 <red_light_camera+0x78>
 			{
 				car_time = one_ms_count;
   800514:	d0a75f17 	ldw	r2,-25220(gp)
@@ -1410,61 +1410,61 @@ void red_light_camera(){
   800544:	d0a77315 	stw	r2,-25140(gp)
 					camera_active = 0;
   800548:	d0277415 	stw	zero,-25136(gp)
-					camera_used = 1;
-  80054c:	00800044 	movi	r2,1
-  800550:	d0a77715 	stw	r2,-25124(gp)
 		}
 	}
 //	 else if (car_exit == 1){
 //
 //	}
 }
-  800554:	00001d06 	br	8005cc <red_light_camera+0xf4>
+  80054c:	00001f06 	br	8005cc <red_light_camera+0xf4>
+					snapshot_taken = 1;
 					camera_active = 0;
-					camera_used = 1;
 				}
 
 
 			} else if (currentState == RR){
-  800558:	d0a00117 	ldw	r2,-32764(gp)
-  80055c:	10800918 	cmpnei	r2,r2,36
-  800560:	1000091e 	bne	r2,zero,800588 <red_light_camera+0xb0>
+  800550:	d0a00117 	ldw	r2,-32764(gp)
+  800554:	10800918 	cmpnei	r2,r2,36
+  800558:	1000091e 	bne	r2,zero,800580 <red_light_camera+0xa8>
 				//take_photo = 1;
 				print_stuff("\r\nSnapshot taken\r\n");
-  800564:	01002074 	movhi	r4,129
-  800568:	210a8d04 	addi	r4,r4,10804
-  80056c:	08002900 	call	800290 <print_stuff>
+  80055c:	01002074 	movhi	r4,129
+  800560:	210a8d04 	addi	r4,r4,10804
+  800564:	08002900 	call	800290 <print_stuff>
 				printf("\nNew snapshot text in PUTTY\n");
-  800570:	01002074 	movhi	r4,129
-  800574:	210a9204 	addi	r4,r4,10824
-  800578:	08030b40 	call	8030b4 <puts>
+  800568:	01002074 	movhi	r4,129
+  80056c:	210a9204 	addi	r4,r4,10824
+  800570:	08030b40 	call	8030b4 <puts>
 				snapshot_taken = 1;
-  80057c:	00800044 	movi	r2,1
-  800580:	d0a77315 	stw	r2,-25140(gp)
+  800574:	00800044 	movi	r2,1
+  800578:	d0a77315 	stw	r2,-25140(gp)
 		}
 	}
 //	 else if (car_exit == 1){
 //
 //	}
 }
-  800584:	00001106 	br	8005cc <red_light_camera+0xf4>
+  80057c:	00001306 	br	8005cc <red_light_camera+0xf4>
 				//take_photo = 1;
 				print_stuff("\r\nSnapshot taken\r\n");
 				printf("\nNew snapshot text in PUTTY\n");
 				snapshot_taken = 1;
 
 			} else if ((currentState == RY || currentState == YR) && camera_active == 0){
-  800588:	d0a00117 	ldw	r2,-32764(gp)
-  80058c:	10800520 	cmpeqi	r2,r2,20
-  800590:	1000031e 	bne	r2,zero,8005a0 <red_light_camera+0xc8>
-  800594:	d0a00117 	ldw	r2,-32764(gp)
-  800598:	10800898 	cmpnei	r2,r2,34
+  800580:	d0a00117 	ldw	r2,-32764(gp)
+  800584:	10800520 	cmpeqi	r2,r2,20
+  800588:	1000031e 	bne	r2,zero,800598 <red_light_camera+0xc0>
+  80058c:	d0a00117 	ldw	r2,-32764(gp)
+  800590:	10800898 	cmpnei	r2,r2,34
+  800594:	10000d1e 	bne	r2,zero,8005cc <red_light_camera+0xf4>
+  800598:	d0a77417 	ldw	r2,-25136(gp)
   80059c:	10000b1e 	bne	r2,zero,8005cc <red_light_camera+0xf4>
-  8005a0:	d0a77417 	ldw	r2,-25136(gp)
-  8005a4:	1000091e 	bne	r2,zero,8005cc <red_light_camera+0xf4>
 				camera_active = 1;
+  8005a0:	00800044 	movi	r2,1
+  8005a4:	d0a77415 	stw	r2,-25136(gp)
+				camera_used = 1;
   8005a8:	00800044 	movi	r2,1
-  8005ac:	d0a77415 	stw	r2,-25136(gp)
+  8005ac:	d0a77715 	stw	r2,-25124(gp)
 				one_ms_count = 0;
   8005b0:	d0275f15 	stw	zero,-25220(gp)
 				print_stuff("\r\nCamera activated");

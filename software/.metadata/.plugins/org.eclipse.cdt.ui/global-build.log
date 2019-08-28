@@ -1998,3 +1998,58 @@ Info: Building ../ass5_bsp/
 C:/intelFPGA/16.1/nios2eds/bin/gnu/H-x86_64-mingw32/bin/make --no-print-directory -C ../ass5_bsp/
 [BSP build complete]
 [ass5 build complete]
+12:23:32 **** Incremental Build of configuration Nios II for project ass5 ****
+make all 
+Info: Building ../ass5_bsp/
+C:/intelFPGA/16.1/nios2eds/bin/gnu/H-x86_64-mingw32/bin/make --no-print-directory -C ../ass5_bsp/
+[BSP build complete]
+Info: Compiling hello_world.c to obj/default/hello_world.o
+nios2-elf-gcc -xc -MP -MMD -c -I../ass5_bsp//HAL/inc -I../ass5_bsp/ -I../ass5_bsp//drivers/inc  -pipe -D__hal__ -DALT_NO_INSTRUCTION_EMULATION -DALT_SINGLE_THREADED    -O0 -g -Wall   -mno-hw-div -mhw-mul -mno-hw-mulx -mgpopt=global  -o obj/default/hello_world.o hello_world.c
+hello_world.c: In function 'camera_timer_isr':
+hello_world.c:117:7: warning: unused variable 'timeCount' [-Wunused-variable]
+  int *timeCount = (int*) context;
+       ^
+hello_world.c: In function 'tlc_timer_isr':
+hello_world.c:126:7: warning: unused variable 'timeCount' [-Wunused-variable]
+  int *timeCount = (int*) context;
+       ^
+hello_world.c: In function 'init_buttons_pio':
+hello_world.c:270:2: warning: implicit declaration of function 'alt_irq_register' [-Wimplicit-function-declaration]
+  alt_irq_register(KEYS_IRQ, buttonContext, isr_control);
+  ^
+hello_world.c:261:15: warning: unused variable 'uiButton' [-Wunused-variable]
+  unsigned int uiButton = 0;
+               ^
+hello_world.c: In function 'mode3_UART':
+hello_world.c:355:22: warning: implicit declaration of function 'atoi' [-Wimplicit-function-declaration]
+       new_times[t] = atoi(charArray);
+                      ^
+Info: Linking ass5.elf
+nios2-elf-g++  -T'../ass5_bsp//linker.x' -msys-crt0='../ass5_bsp//obj/HAL/src/crt0.o' -msys-lib=hal_bsp -L../ass5_bsp/   -Wl,-Map=ass5.map   -O0 -g -Wall   -mno-hw-div -mhw-mul -mno-hw-mulx -mgpopt=global  -o ass5.elf obj/default/hello_world.o -lm -msys-lib=m
+nios2-elf-insert ass5.elf --thread_model hal --cpu_name cpu --qsys true --simulation_enabled false --stderr_dev jtag_uart --stdin_dev jtag_uart --stdout_dev jtag_uart --sopc_system_name nios2_system --quartus_project_dir "D:/Compsys-303-Assignment-1" --jdi ../..//output_files/lab1.jdi --sopcinfo D:/Compsys-303-Assignment-1/software/ass5_bsp/../../nios2_system.sopcinfo
+Info: (ass5.elf) 83 KBytes program size (code + initialized data).
+Info:            8100 KBytes free for stack + heap.
+Info: Creating ass5.objdump
+nios2-elf-objdump --disassemble --syms --all-header --source ass5.elf >ass5.objdump
+[ass5 build complete]
+12:23:36 **** Incremental Build of configuration Nios II for project ass5_bsp ****
+make all 
+[BSP build complete]
+12:23:39 **** Incremental Build of configuration Nios II for project ass5 ****
+make all 
+Info: Building ../ass5_bsp/
+C:/intelFPGA/16.1/nios2eds/bin/gnu/H-x86_64-mingw32/bin/make --no-print-directory -C ../ass5_bsp/
+[BSP build complete]
+[ass5 build complete]
+12:25:01 **** Build of configuration Nios II for project ass5 ****
+make all 
+Info: Building ../ass5_bsp/
+C:/intelFPGA/16.1/nios2eds/bin/gnu/H-x86_64-mingw32/bin/make --no-print-directory -C ../ass5_bsp/
+[BSP build complete]
+[ass5 build complete]
+12:25:25 **** Incremental Build of configuration Nios II for project ass5 ****
+make all 
+Info: Building ../ass5_bsp/
+C:/intelFPGA/16.1/nios2eds/bin/gnu/H-x86_64-mingw32/bin/make --no-print-directory -C ../ass5_bsp/
+[BSP build complete]
+[ass5 build complete]
