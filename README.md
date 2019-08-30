@@ -39,30 +39,30 @@ There are 4 modes of the traffic light controller:
   
 Basic Controls:
   - Selecting between modes:
-    Switch 0 = mode 1 (when set high)
-    Switch 1 = mode 2 (when set high)
-    Switch 2 = mode 3 (when set high)
-    Switch 3 = mode 4 (when set high)
+    - Switch 0 = mode 1 (when set high)
+    - Switch 1 = mode 2 (when set high)
+    - Switch 2 = mode 3 (when set high)
+    - Switch 3 = mode 4 (when set high)
     
-    Default mode (upon start-up) = mode 1
-    Most recently selected mode holds when all switches set low
+    - Default mode (upon start-up) = mode 1
+    - Most recently selected mode holds when all switches set low
     
   - Button Uses:
-    Key 0 = North-South pedestrian light (Mode 2, 3 and 4)
-    Key 1 = East-West pedestrian light (Mode 2, 3 and 4)
-    Key 2 = Car entering and exiting an intersection (Mode 4)
+    - Key 0 = North-South pedestrian light (Mode 2, 3 and 4)
+    - Key 1 = East-West pedestrian light (Mode 2, 3 and 4)
+    - Key 2 = Car entering and exiting an intersection (Mode 4)
     
   - Other Switch Uses:
-    Switch 17 (set high) = Indicates new state timeout values are to be entered (Mode 3 and 4)
-    Switch 17 (set low) = Continue using current state timeout values (Mode 3 and 4)
+    - Switch 17 (set high) = Indicates new state timeout values are to be entered (Mode 3 and 4)
+    - Switch 17 (set low) = Continue using current state timeout values (Mode 3 and 4)
     
 LEDs:
-  LEDG0 = North-South Green Light
-  LEDG1 = North-South Yellow Light
-  LEDG2 = North-South Red Light
-  LEDG3 = East-West Green Light
-  LEDG4 = East-West Yellow Light
-  LEDG5 = East-West Red Light
-  LEDG6 = North-South Pedestrian Light
-  LEDG7 = East-West Pedestrian Light
+  - LEDG0 = North-South Green Light
+  - LEDG1 = North-South Yellow Light
+  - LEDG2 = North-South Red Light
+  - LEDG3 = East-West Green Light
+  - LEDG4 = East-West Yellow Light
+  - LEDG5 = East-West Red Light
+  - LEDG6 = North-South Pedestrian Light
+  - LEDG7 = East-West Pedestrian Light
     
