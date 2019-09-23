@@ -33,12 +33,12 @@ void * buttonContext = (void*) &uiButtonValue;
 int pedNS_pressed = 0;
 int pedEW_pressed = 0;
 
-unsigned int t1=      	500;
-unsigned int t2=   	6000;
-unsigned int t3=  	2000;
-unsigned int t4=	  500;
-unsigned int t5=	6000;
-unsigned int t6=	   2000;
+unsigned int t1=      		500;
+unsigned int t2=   			6000;
+unsigned int t3=  			2000;
+unsigned int t4=			500;
+unsigned int t5=			6000;
+unsigned int t6=	  		2000;
 
 unsigned int new_times[6];
 
